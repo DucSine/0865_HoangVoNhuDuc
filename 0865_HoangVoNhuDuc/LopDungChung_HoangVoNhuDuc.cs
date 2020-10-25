@@ -11,13 +11,6 @@ namespace _0865_HoangVoNhuDuc
 {
     class LopDungChung_HoangVoNhuDuc
     {
-        SqlCommand cmd;
-        SqlDataAdapter dataAdapter;
-        IDataReader reader;
-        DataTable dataTable;
-        bool check = false;
-        string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\0865_HoangVoNhuDuc\0865_HoangVoNhuDuc\0865_HoangVoNhuDuc.mdf;Integrated Security=True";
-     
         public LopDungChung_HoangVoNhuDuc() { }
 
         public SqlConnection GetConnection()
@@ -26,7 +19,9 @@ namespace _0865_HoangVoNhuDuc
              * get connection string
              */
             SqlConnection connection = new SqlConnection();
+            string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\0865_HoangVoNhuDuc\0865_HoangVoNhuDuc\0865_HoangVoNhuDuc.mdf;Integrated Security=True";
             connection.ConnectionString = connectionString;
+
             return connection;
         }
 
@@ -47,55 +42,20 @@ namespace _0865_HoangVoNhuDuc
             if (conn.State == ConnectionState.Open)
                 conn.Close();
         }
-        public DataTable GetAllKHoa()
-        {
-            using (SqlConnection conn = GetConnection())
-            {
-                dataTable = new DataTable();
-                    openConnection(conn);
-                    cmd = new SqlCommand("spgetKHoa", conn)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
-                    reader = cmd.ExecuteReader();
-                    if (reader != null)
-                        dataTable.Load(reader);
-                    closeConnection(conn);
-                    return dataTable;
-             
-            }
-        }
-
-        public DataTable GetAllSinhVien()
-        {
-            using (SqlConnection conn = GetConnection())
-            {
-                dataTable = new DataTable();
-                openConnection(conn);
-                cmd = new SqlCommand("spgetSV", conn)
-                {
-                    CommandType = CommandType.StoredProcedure
-                };
-                reader = cmd.ExecuteReader();
-                if (reader != null)
-                    dataTable.Load(reader);
-                closeConnection(conn);
-                return dataTable;
-
-            }
-        }
-
+ 
         public DataTable ExecuteQuery(string sql)
         {
             /**Sumarry:
              * Execute select query
              */
-            dataAdapter = new SqlDataAdapter(sql, GetConnection());
-            dataAdapter.Fill(dataTable);
+            DataTable dataTable = new DataTable();
+            using (SqlDataAdapter dataAdapter = new SqlDataAdapter(sql, GetConnection()))
+            {
+                dataAdapter.Fill(dataTable);
+            }
+            
             return dataTable;
         }
-
-
 
         public bool ExecuteUpdate(string sql)
         {
@@ -104,10 +64,11 @@ namespace _0865_HoangVoNhuDuc
              * Execute insert query
              * Execute delete query
              */
+            bool check = false;
             using (SqlConnection conn = GetConnection())
             {
                 openConnection(conn);
-                cmd = new SqlCommand(sql, conn);
+                SqlCommand cmd = new SqlCommand(sql, conn);
                 check = cmd.ExecuteNonQuery() == 1 ? true : false;
                 closeConnection(conn);
             }

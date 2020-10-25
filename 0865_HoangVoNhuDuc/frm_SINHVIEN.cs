@@ -14,7 +14,7 @@ namespace _0865_HoangVoNhuDuc
     public partial class frm_SINHVIEN : Form
     {
         LopDungChung_HoangVoNhuDuc lopDungChung = new LopDungChung_HoangVoNhuDuc();
-        
+        DataTable dataTable;
         public frm_SINHVIEN()
         {
             InitializeComponent();
@@ -22,35 +22,85 @@ namespace _0865_HoangVoNhuDuc
 
         private void frm_SINHVIEN_Load(object sender, EventArgs e)
         {
-            Init_LB_BoxKhoa();
-            DataTable dataTable = lopDungChung.GetAllSinhVien();
-            gv_DsSinhvien.DataSource = dataTable;
+            InitLB_BoxKhoa();
+            LoadDataSinhVien();
+        }
+        private void gv_DsSinhvien_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            txt_Msv.Text = gv_DsSinhvien[0, e.RowIndex].Value.ToString();
+            txt_HoTen.Text = gv_DsSinhvien[1, e.RowIndex].Value.ToString();
+            txt_Khoa.Text = gv_DsSinhvien[2, e.RowIndex].Value.ToString();
         }
 
-        protected void Init_LB_BoxKhoa()
+        private void ButtonClick(object sender, EventArgs e)
         {
-            DataTable dataTable = lopDungChung.GetAllKHoa();
-            LB_BoxKhoa.DataSource = dataTable;
-            LB_BoxKhoa.DisplayMember = "TENK";
+            string sql = " ";
+            string[] SV = { txt_Msv.Text, txt_HoTen.Text, txt_Khoa.Text }; 
+            string[] message = { "Thành công", "Thất bại", "Sinh viên đã tồn tại" };
 
+            Button btn = (Button)sender;
+
+            switch (btn.Name)
+            {
+                case "btn_Them":
+                    sql = string.Format("INSERT INTO SINHVIEN VALUES (N'{0}', N'{1}', N'{2}')",SV);
+                    break;
+                case "btn_Sua":
+                    sql = string.Format("UPDATE SINHVIEN SET HOTEN = N'{1}', TENK = N'{2}' WHERE MSSV = N'{0}'", SV);
+                    message[1] = "Sinh viên không tồn tại";
+                    break;
+                case "btn_Xoa":
+                    sql = string.Format("DELETE FROM SINHVIEN WHERE MSSV = N'{0}'", SV[0]);
+                    message[1] = "Sinh viên không tồn tại";
+                    break;
+                case "btn_Dong":
+                    DialogResult dialogResult = MessageBox.Show("Bạn muốn thoát không?", "Thông báo", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                        this.Close();
+                    break;
+            }
+            try
+            {
+                bool check = lopDungChung.ExecuteUpdate(sql);
+                if (check)
+                    MessageBox.Show(message[0]);
+                else
+                    MessageBox.Show(message[1]);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(message[2]);
+            }
+            
+
+            LoadDataSinhVien();
+            
+        }
+
+        protected void InitLB_BoxKhoa()
+        {
+            string sql = "SELECT * FROM KHOA";
+            dataTable = new DataTable();
+            dataTable = lopDungChung.ExecuteQuery(sql);
+            LB_BoxKhoa.DataSource = dataTable;
+            LB_BoxKhoa.ValueMember = "TENK";
+        }
+
+        protected void LoadDataSinhVien()
+        {
+            string sql = "SELECT * FROM SINHVIEN";
+            dataTable = new DataTable();
+            dataTable = lopDungChung.ExecuteQuery(sql);
+            gv_DsSinhvien.DataSource = dataTable;
         }
 
         private void LB_BoxKhoa_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string value = LB_BoxKhoa.SelectedValue.ToString().Trim();
-            
-           // DataTable tb = lopDungChung.ExecuteQuery(sql);
-          // gv_DsSinhvien.DataSource = tb;
-
-        }
-
-        private void btn_Dong_Click(object sender, EventArgs e)
-        {
-            DialogResult dlr = MessageBox.Show("Bạn có muốn thoát không?", "Thông báo", MessageBoxButtons.YesNoCancel);
-            if (dlr == DialogResult.Yes)
-            {
-                this.Close();
-            }
+            string value = LB_BoxKhoa.SelectedValue.ToString();
+            string sql = string.Format("SELECT * FROM SINHVIEN WHERE TENK = N'{0}'", value);
+            dataTable = new DataTable();
+            dataTable = lopDungChung.ExecuteQuery(sql);
+            gv_DsSinhvien.DataSource = dataTable;
         }
     }
 }

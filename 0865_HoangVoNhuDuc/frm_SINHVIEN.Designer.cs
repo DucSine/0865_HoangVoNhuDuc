@@ -82,6 +82,7 @@
             this.gv_DsSinhvien.Name = "gv_DsSinhvien";
             this.gv_DsSinhvien.Size = new System.Drawing.Size(720, 217);
             this.gv_DsSinhvien.TabIndex = 0;
+            this.gv_DsSinhvien.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gv_DsSinhvien_CellClick);
             // 
             // btn_Dong
             // 
@@ -91,7 +92,7 @@
             this.btn_Dong.TabIndex = 10;
             this.btn_Dong.Text = "Đóng";
             this.btn_Dong.UseVisualStyleBackColor = true;
-            this.btn_Dong.Click += new System.EventHandler(this.btn_Dong_Click);
+            this.btn_Dong.Click += new System.EventHandler(this.ButtonClick);
             // 
             // btn_Xoa
             // 
@@ -101,6 +102,7 @@
             this.btn_Xoa.TabIndex = 9;
             this.btn_Xoa.Text = "Xóa";
             this.btn_Xoa.UseVisualStyleBackColor = true;
+            this.btn_Xoa.Click += new System.EventHandler(this.ButtonClick);
             // 
             // btn_Sua
             // 
@@ -110,6 +112,7 @@
             this.btn_Sua.TabIndex = 8;
             this.btn_Sua.Text = "Sửa";
             this.btn_Sua.UseVisualStyleBackColor = true;
+            this.btn_Sua.Click += new System.EventHandler(this.ButtonClick);
             // 
             // btn_Them
             // 
@@ -119,6 +122,7 @@
             this.btn_Them.TabIndex = 7;
             this.btn_Them.Text = "Thêm";
             this.btn_Them.UseVisualStyleBackColor = true;
+            this.btn_Them.Click += new System.EventHandler(this.ButtonClick);
             // 
             // panel2
             // 
